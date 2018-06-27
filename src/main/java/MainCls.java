@@ -26,12 +26,15 @@ public class MainCls {
     protected static String url = "http://192.168.1.99:8080/v2/api-docs";
     protected static Template temp;
     protected static String path = "E:\\project\\swagger-retrofit2\\cls";
+    protected static List<String> outApiTags=new ArrayList<>();
+    static {
 
+    }
     public static void main(String[] arg) throws IOException, UnirestException, TemplateException {
         initTpl();
         ApiBean apiBean = getApiData();
         HashMap<String, List<Api>> clsMap = buildClsMap(apiBean);
-        classClean(clsMap);
+        clsMap = classClean(clsMap);
         outClassFiles(clsMap, path);
 
     }
@@ -122,8 +125,21 @@ public class MainCls {
         return clsMap;
     }
 
-    private static void classClean(HashMap<String, List<Api>> clsMap) {
+    private static HashMap<String, List<Api>> classClean(HashMap<String, List<Api>> clsMap) {
 
+        if (outApiTags.size()>0){
+            HashMap<String, List<Api>> map = new HashMap<>();
+            for (String tag : outApiTags) {
+                Optional.ofNullable(clsMap.get(tag))
+                        .ifPresent(ls->{
+                            map.put(tag,ls);
+                        });
+            }
+            if (map.size()>0){
+                return map;
+            }
+        }
+        return clsMap;
     }
 
 
